@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% load static %}
+{% block content %}
+<div class="container mt-3">
+    <div class="media text-left">
+        <div class="media-body">
+            <p class="mb-2">{{post.author}} - {{post.date | timesince }} ago</p>
+            <h4 class="mb-0">{{post.title}}</h5>
+                <p class="mt-1">{{post.likes.count}} points - {{post.comments.count }} comments </p>
+                {% if request.user == post.author %}
+                <a href="{% url 'delete' post.post_id %}">
+                    <button class="btn btn-warning btn-sm">
+                        Delete this Post
+                </a></button>
+                <a href="{% url 'update' post.post_id %}">
+                    <button class="btn btn-warning btn-sm">
+                        Update this Post
+                </a></button>
+                {% endif %}
+                {% if user.is_authenticated %}
+                {% if user in post.likes.all %}
+                <a href="{% url 'like' post_id=post.post_id  %}"
+                   name="{{ post.post_id }}">
+                    <button class="btn btn-outline-primary">
+                        <i class="fa fa-arrow-up"></i>
+                    </button>
+                </a>
+                {% else %}
+                <a href="{% url 'like' post_id=post.post_id  %}"
+                   name="{{ post.post_id }}">
+                    <button class="btn btn-outline-dark">
+                        <i class="fa fa-arrow-up"></i>
+                    </button>
+                </a>
+                {% endif %}
+
+                {% if user in post.dislikes.all %}
+                <a href="{% url 'dislike' post_id=post.post_id %}"
+                   name="{{ post.post_id }}">
+                    <button class="btn btn-outline-primary">
+                        <i class="fa fa-arrow-down"></i>
+                    </button>
+                </a>
+                {% else %}
+                <a href="{% url 'dislike' post_id=post.post_id %}"
+                   name="{{ post.post_id }}">
+                    <button class="btn btn-outline-dark">
+                        <i class="fa fa-arrow-down"></i>
+                    </button>
+                </a>
+                {% endif %}
+                {% else %}
+                <a href="{% url 'login' %}">
+                    <button class="btn btn-outline-dark">
+                        <i class="fa fa-arrow-up"></i>
+                    </button>
+                </a>
+                <a href="{% url 'login' %}">
+                    <button class="btn btn-outline-dark">
+                        <i class="fa fa-arrow-down"></i>
+                    </button>
+                </a>
+                {% endif %}
+                <a href="/gag/{{next_post.post_id}}">
+                    <span class="badge badge-pill badge-warning">Next Post</span>
+                </a>
+                <br>
+                <img class="mt-2" src="{{post.image.url}}" alt="Generic placeholder image">
+                <h4 class="mb-0">{{post.comments.count}} Comments</h5>
+                    <hr>
+                    <header>
+                        {% if user.is_authenticated %}
+                        <h3>Post a Comment</h3>
+                        <form method="POST" action="." id="comment-form" class="commenting-form"
+                              enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    {{ form }}
+                                    <input type='hidden' value='{{ user.username }}' id='user' name='user'>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <button type="submit" class="btn btn-dark">Submit Comment</button>
+                                </div>
+                            </div>
+                        </form>
+                        {% else %}
+                        <h3>You must <a href="{% url 'login' %}">login</a> to add a comment</h3>
+                        {% endif %}
+                    </header>
+                    <div class="post-comments">
+                        <header>
+                            <h3 class="h4">Comments<span class="no-of-comments">({{ post.comments.count }})</span></h3>
+                        </header>
+                        <a id="comments"></a>
+                        {% for comment in comments %}
+                        <div class="comment">
+                            <div class="comment-header d-flex justify-content-between">
+                                <div class="user d-flex align-items-center">
+                                    <div class="image">
+                                        <img src="{{ comment.user.profile.image.url }}" alt="..."
+                                             class="img-fluid rounded-circle">
+                                    </div>
+                                    <div class="title"><strong>{{ comment.user }}{% if comment.user.is_staff %}
+                                        <i class="fas fa-users-cog"></i>
+                                        {% endif %}</strong><span
+                                            class="date"> <br>{{ comment.date|timesince }} ago</span></div>
+                                </div>
+                            </div>
+                            <div class="comment-body">
+                                <p style="font-size: 14px;">{{ comment.content |wordwrap:50|linebreaks }}</p>
+                                <br>
+                                {% if comment.image %}
+                                <a href="{{ comment.image.url }}">
+                                    <div class="comment-image" style="width:900px;">
+                                        <img src="{{ comment.image.url }}">
+                                </a>
+                            </div>
+                            {% endif %}
+                            {% if user.is_authenticated %}
+                            {% if user in comment.likes.all %}
+                            <a href="{% url 'like_comment'  post_id=post.post_id  comment_id=comment.id %}">
+                                <i class="fa fa-arrow-up"></i>
+                            </a> {{ comment.likes.count }}
+                            {% else %}
+                            <a href="{% url 'like_comment'  post_id=post.post_id  comment_id=comment.id %}"
+                               name="{{ comment.id }}">
+                                <i class="fa fa-arrow-up"></i>
+                            </a></i>{{ comment.likes.count }}
+                            {% endif %}
+                            {% if user in comment.dislikes.all %}
+                            <a href="{% url 'dislike_comment'  post_id=post.post_id  comment_id=comment.id %}"
+                               name="{{ comment.id }}">
+                                <i class="fa fa-arrow-down"></i>
+                            </a>{{ comment.dislikes.count }}
+                            {% else %}
+                            <a href="{% url 'dislike_comment' post_id=post.post_id  comment_id=comment.id %}"
+                               name="{{ comment.id }}">
+                                <i class="fa fa-arrow-down"></i>
+                            </a> {{ comment.dislikes.count }}
+                            {% endif %}
+                            {% endif %}
+                            <br>
+                            <br>
+                            <button type="button" id="reply-btn" name="reply-btn"
+                                    class="reply-btn btn btn-dark btn-sm">
+                                Replies
+                                ({{ comment.replies.count }})
+                            </button>
+                        </div>
+                        <div class="replied-comments" name="replied-comments" id="replied-comments"
+                             style="display:none;">
+                            {% for reply in comment.replies.all %}
+                            <blockquote class="blockquote ml-6">
+                                <div class="user d-flex align-items-right">
+                                    <div class="image">
+                                        <img src="{{ reply.user.profile.image.url }}" alt="..."
+                                             class="img-fluid rounded-circle">
+                                    </div>
+                                    <div class="title" style="font-size:0.9em;"><strong>
+                                        {{ reply.user }}{% if reply.user.is_staff %}
+                                        <i class="fas fa-users-cog" alt="admin" title="admin"></i>
+                                        {% else %}
+                                        {% endif %}</strong><span
+                                            class="date">{{ reply.date|timesince }} ago</span>
+                                    </div>
+                                </div>
+                                <div class="user d-flex align-items-right">
+                                    <p style="font-size: 14px;">{{ reply.content |linebreaks }}</p>
+                                    <br>
+                                </div>
+                                {% if user.is_authenticated %}
+                                {% if user in reply.likes.all %}
+                                <a
+                                        href="{% url 'like_comment'  post_id=post.post_id  comment_id=reply.id %}"
+                                        name="{{ reply.id }}">
+                                    <i class="fa fa-arrow-up"></i> </a> {{ reply.likes.count }}
+
+                                {% else %}
+                                <a
+                                        href="{% url 'like_comment' post_id=post.post_id  comment_id=reply.id %}"
+                                        name="{{ reply.id }}"><i class="fa fa-arrow-up"></i> </a> {{ reply.likes.count
+                                }}
+
+                                {% endif %}
+
+                                {% if user in reply.dislikes.all %}
+                                <a
+                                        class="disliked-btn"
+                                        href="{% url 'dislike_comment'   post_id=post.post_id  comment_id=reply.id %}"
+                                        name="{{ comment.id }}"><i class="fa fa-arrow-down"></i> </a> {{
+                                reply.dislikes.count }}
+
+                                {% else %}
+                                <a
+                                        href="{% url 'dislike_comment'   post_id=post.post_id  comment_id=reply.id %}"
+                                        name="{{ reply.id }}"><i class="fa fa-arrow-down"></i> </a> {{
+                                reply.dislikes.count }}
+
+                                {% endif %}
+                                {% endif %}
+                            </blockquote>
+                            {% endfor %}
+                            {% if user.is_authenticated %}
+                            {% if form.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                Required field
+                            </div>
+                            {% endif%}
+                            <h2 class="h6">Leave a reply to <b>{{ comment.user }}</b></h2>
+                            <form method="POST" action="." id="reply-form" class="commenting-form"
+                                  enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                    <div class="form-group col-md-12">
+                                        {{ form | crispy }}
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <button type="submit" name="reply-button" class="btn btn-dark">Reply
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    <style>
+                        .image {
+                            width: 40px;
+                        }
+                    </style>
+
+                    {% endblock content %}

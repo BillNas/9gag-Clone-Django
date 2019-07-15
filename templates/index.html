@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<section>
+    <div class="container mt-3">
+        {% for post in posts %}
+        <div class="media text-left">
+            <div class="media-body">
+                <a href="{% url 'profile' post.author %}"
+                <p class="mb-2">{{post.author}}</a> - {{post.date | timesince }} ago</p>
+                <a href="{{post.get_absolute_url}}">
+                    <h4 class="mb-0">{{post.title}}</h4></a>
+                <br>
+                <img class="" src="{{post.image.url}}" alt="{{post.title}}">
+                <p class="mt-1"><b>{{post.likes.count}} ⬆️ {{post.dislikes.count}} ⬇️ - {{post.comments.count }}
+                    comments 💬 </b></p>
+            </div>
+
+        </div>
+        <hr>
+        {% endfor %}
+</section>
+<style>
+    img {
+        width:;
+    }
+</style>
+{% endblock content %}

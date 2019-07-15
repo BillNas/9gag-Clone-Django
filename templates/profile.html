@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+<style>
+    .img {
+        width: 2px;
+    }
+</style>
+{% block content %}
+<div class="content-section">
+    <div class="media">
+        <div class="img">
+            <img class="rounded-circle account-img" src="{{ user.profile.image.url }}">
+        </div>
+        <div class="media-body">
+            <h2 class="account-heading">{{ user.username }}</h2>
+            <p class="text-secondary">{{ user.email }}</p>
+        </div>
+    </div>
+    <hr>
+</div>
+
+{% if request.user == user %}
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <fieldset class="form-group">
+        <legend class="border-bottom mb-4">Profile Info</legend>
+        {{ user_form | crispy }}
+        {{ profile_form | crispy }}
+    </fieldset>
+    <div class="form-group">
+        <button class="btn btn-outline-info" type="submit">Update</button>
+    </div>
+</form>
+{% endif %}
+
+</div>
+<legend class="border-bottom mb-4 text-center">{{user}}'s Posts</legend>
+<div class="container mt-3">
+    {% for post in posts %}
+    <div class="media text-left">
+        <div class="media-body">
+            <p class="mb-2">{{post.author}} - {{post.date | timesince }} ago</p>
+            <a href="{{post.get_absolute_url}}">
+                <h4 class="mb-0">{{post.title}}</h4></a>
+            <br>
+            <img class="" src="{{post.image.url}}" alt="Generic placeholder image">
+            {% empty %}
+            <p class="media text-center">
+            <h2>No Posts to show</h2></p>
+        </div>
+    </div>
+    {% endfor %}
+    {% endblock content %}

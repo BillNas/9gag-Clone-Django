@@ -1,0 +1,73 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">⚪Fungag</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01"
+            aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarColor01">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="/">Home 🏠 <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/random">Random 🎲</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Categories
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="/funny">Funny 😂</a>
+                    <a class="dropdown-item" href="/animals">Animals 🐶</a>
+                    <a class="dropdown-item" href="/manga">Manga💢</a>
+                    <a class="dropdown-item" href="/nature">Nature 🌲</a>
+                    <a class="dropdown-item" href="/awesome">Awesome 😮</a>
+                </div>
+            </li>
+        </ul>
+        </button>
+        <ul class="navbar-nav mr-20">
+            {% if user.is_authenticated %}
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <img src="{{user.profile.image.url }}" alt="..."
+                         class="img-circle ml-5">
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="{% url 'profile'  user %}">My Profile</a>
+                    <a class="dropdown-item" href="/logout">Logout</a>
+                </div>
+            </li>
+            <button class="btn btn-primary btn-sm ml-1">
+                <a class="nav-link" href="/upload"><b>➕ Upload</button>
+            </b></a>
+            </button>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <button class="btn btn-warning btn-sm">
+                    <a class="nav-link" href="/login"><b>Login</b></a>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="btn btn-primary btn-sm ml-1">
+                    <a class="nav-link" href="/signup"><b>Sign up</b></a>
+                </button>
+            </li>
+            {% endif %}
+        </ul>
+        <form class="form-inline my-2 my-lg-0 ml-2">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search">
+            <button class="btn btn-secondary my-2 my-sm-0" type="submit"><i class="fa fa-search"></i></button>
+        </form>
+    </div>
+    </div>
+</nav>
+<style>
+    .img-circle {
+        border-radius: 40%;
+        width: 2.1em;
+    }
+</style>

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+<section>
+    <div class="container mt-3">
+        <legend class="border-bottom mb-4"><h2>{{cat | title}}</h2></legend>
+        {% for post in posts %}
+        <div class="media text-left">
+            <div class="media-body">
+                <p class="mb-2">{{post.author}} - {{post.date | timesince }} ago</p>
+                <a href="{{post.get_absolute_url}}">
+                    <h4 class="mb-0">{{post.title}}</h4></a>
+                <br>
+                <img class="" src="{{post.image.url}}" alt="Generic placeholder image">
+            </div>
+        </div>
+        <hr>
+        {% endfor %}
+</section>
+<style>
+    img {
+        width:;
+    }
+</style>
+{% endblock content %}
