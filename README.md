@@ -9,4 +9,6 @@ A simple 9gag clone made for fun with Django.
 <li>☑️ User can Delete/Update it's Posts</li>
 <li>☑️ User can Like/Dislike Posts</li>
 <li>☑️ User can Like/Dislike Comments/Replies</li>
+ <li>☑️ User can Create/Edit i'ts Profile</li>
+  <li>☑️ User can view other users' Profiles</li>
 </ul>
