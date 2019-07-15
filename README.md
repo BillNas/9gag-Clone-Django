@@ -12,3 +12,9 @@ A simple 9gag clone made for fun with Django.
  <li>☑️ User can Create/Edit i'ts Profile</li>
   <li>☑️ User can view other users' Profiles</li>
 </ul>
+
+<b> cd src <br>
+  python manage.py runserver </b> 
+  
+<br>
+python manage.py collectstatic //to create the static folders
